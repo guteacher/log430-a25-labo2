@@ -1,0 +1,4 @@
+@startuml 
+    [Gestion des utilisateurs]
+    [Gestion des articles]
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+    Utilisateur --> (Voir la liste d'utilisateurs)
+    Utilisateur --> (Ajouter un utilisateur)
+    Utilisateur --> (Voir la liste d'articles)
+    Utilisateur --> (Ajouter un article)
+@enduml

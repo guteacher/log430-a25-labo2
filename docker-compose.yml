@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    volumes:
+      - .:/app/src
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - redis
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: labo02
+      MYSQL_PASSWORD: labo02
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+volumes:
+  db_data:

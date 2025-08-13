@@ -1,0 +1,9 @@
+@startuml
+  node Conteneur {
+    component "main.py" 
+    database "MySQL"
+    database "MongoDB"
+    "main.py" <--> "MySQL"
+    "main.py" <--> "MongoDB"
+  }
+@enduml
