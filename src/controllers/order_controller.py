@@ -13,7 +13,6 @@ class OrderController:
         try:
             print(user_id, items)
             order_id = WriteOrder.add_order(user_id, items)
-            print("passou", order_id)
             return jsonify({'order_id': order_id}), 201
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

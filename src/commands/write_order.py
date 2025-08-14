@@ -1,50 +1,79 @@
 from db import get_mysql_conn, get_redis_conn, cache_set
+import sys, os
 from decimal import Decimal
 
 class WriteOrder:
     
     def add_order(user_id: int, items: list):
-        '''
-        items: list of dicts: [{'product_id': int, 'quantity': int}]
-        This creates order, order_items and updates Redis caches for aggregates.
-        '''
+        """
+        Add an order for a user with multiple items.
+        items format: [{'product_id': 1, 'quantity': 2}, ...]
+        """
+
+        if not items:
+            raise ValueError("Items list cannot be empty.")
+
+        # Extract product IDs
+        product_ids = [item['product_id'] for item in items]
+
+        # Connect to the database
         conn = get_mysql_conn()
-        cur = conn.cursor()
-        print("TODO 1")
+        cursor = conn.cursor(dictionary=True)  # dictionary=True so we get column names
+
         try:
-            # compute total from product prices
-            total = Decimal('0.00')
-            product_prices = {}
-            print("TODO 2")
-            # TODO: terrible code, fetch this once
-            for it in items:
-                cur.execute("SELECT price FROM products WHERE id in (1,2,3)")
-                row = cur.fetchone()
-                if not row:
-                    raise ValueError(f"Product {it['product_id']} not found")
-                price = Decimal(str(row[0]))
-                product_prices[it['product_id']] = price
-                total += price * int(it.get('quantity',1))
-                print("TODO 3")
-            # insert order
-            print("chegou aqui ou t[a dificil]")
-            cur.execute("INSERT INTO orders (user_id, total_amount) VALUES (%s,%s)", (user_id, float(total)))
-            order_id = cur.lastrowid
-            # insert items
-            for it in items:
-                pid = it['product_id']
-                qty = int(it.get('quantity',1))
-                cur.execute("INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (%s,%s,%s,%s)", (order_id, pid, qty, float(product_prices[pid])))
+            # Fetch all product prices at once
+            placeholders = ", ".join(["%s"] * len(product_ids))
+            cursor.execute(
+                f"SELECT id, price FROM products WHERE id IN ({placeholders})",
+                product_ids
+            )
+            products_data = cursor.fetchall()
+
+            # Map product_id → price
+            price_map = {row["id"]: row["price"] for row in products_data}
+
+            # Compute total amount
+            total_amount = 0
+            order_items_data = []
+            for item in items:
+                pid = item["product_id"]
+                qty = item["quantity"]
+
+                if pid not in price_map:
+                    raise ValueError(f"Product ID {pid} not found in database.")
+
+                unit_price = price_map[pid]
+                total_amount += unit_price * qty
+
+                order_items_data.append((pid, qty, unit_price))
+
+            # Insert into orders table
+            cursor.execute(
+                "INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)",
+                (user_id, total_amount)
+            )
+            order_id = cursor.lastrowid
+
+            # Insert into order_items in one go
+            values_placeholder = ", ".join(["(%s, %s, %s, %s)"] * len(order_items_data))
+            values_data = []
+            for pid, qty, price in order_items_data:
+                values_data.extend([order_id, pid, qty, price])
+
+            cursor.execute(
+                f"INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES {values_placeholder}",
+                values_data
+            )
+
+            # Commit transaction
             conn.commit()
-            # update Redis aggregates (best-effort; read side will be from redis)
-            r = get_redis_conn()
-            # invalidate caches that depend on orders
-            # TODO: update cache, do not simply invalidate
-            r.delete('best_selling_products')
-            r.delete('highest_spending_users')
-            return order_id
+            return cursor.lastrowid
+
+        except Exception as e:
+            conn.rollback()
+            raise e
         finally:
-            cur.close()
+            cursor.close()
             conn.close()
 
     def remove_order(order_id: int):
