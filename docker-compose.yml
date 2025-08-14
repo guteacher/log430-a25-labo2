@@ -1,28 +1,32 @@
 version: '3.8'
 services:
-  api:
+  flask:
     build: .
     volumes:
-      - .:/app/src
-    ports:
-      - "5000:5000"
+      - .:/app
+    #ports:
+    #  - "5000:5000"
     depends_on:
       - db
       - redis
+
   db:
-    image: mysql:8.0
+    image: mysql:8
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: labo02_db
       MYSQL_USER: labo02
       MYSQL_PASSWORD: labo02
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      #- db_data:/var/lib/mysql
       - ./db-init:/docker-entrypoint-initdb.d
+
   redis:
     image: redis:7
+    restart: unless-stopped
     ports:
       - "6379:6379"
 volumes:

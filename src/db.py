@@ -5,6 +5,7 @@ import json
 import config
 
 def get_mysql_conn():
+    print("config.DB_HOST", config.DB_HOST)
     return mysql.connector.connect(
         host=config.DB_HOST,
         port=config.DB_PORT,
