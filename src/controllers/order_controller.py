@@ -11,7 +11,6 @@ class OrderController:
         if not user_id or not items:
             return jsonify({'error':'user_id and items are required'}), 400
         try:
-            print(user_id, items)
             order_id = WriteOrder.add_order(user_id, items)
             return jsonify({'order_id': order_id}), 201
         except Exception as e:

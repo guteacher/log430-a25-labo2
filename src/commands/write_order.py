@@ -1,6 +1,7 @@
 from db import get_mysql_conn, get_redis_conn, cache_set
 import sys, os
 from decimal import Decimal
+import json
 
 class WriteOrder:
     
@@ -13,26 +14,21 @@ class WriteOrder:
         if not items:
             raise ValueError("Items list cannot be empty.")
 
-        # Extract product IDs
         product_ids = [item['product_id'] for item in items]
 
-        # Connect to the database
+        # Get connection
         conn = get_mysql_conn()
-        cursor = conn.cursor(dictionary=True)  # dictionary=True so we get column names
+        cursor = conn.cursor(dictionary=True) 
 
         try:
-            # Fetch all product prices at once
+            # Get products
             placeholders = ", ".join(["%s"] * len(product_ids))
             cursor.execute(
                 f"SELECT id, price FROM products WHERE id IN ({placeholders})",
                 product_ids
             )
             products_data = cursor.fetchall()
-
-            # Map product_id → price
             price_map = {row["id"]: row["price"] for row in products_data}
-
-            # Compute total amount
             total_amount = 0
             order_items_data = []
             for item in items:
@@ -47,14 +43,14 @@ class WriteOrder:
 
                 order_items_data.append((pid, qty, unit_price))
 
-            # Insert into orders table
+            # Insert orders
             cursor.execute(
                 "INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)",
                 (user_id, total_amount)
             )
             order_id = cursor.lastrowid
 
-            # Insert into order_items in one go
+            # Insert order_items 
             values_placeholder = ", ".join(["(%s, %s, %s, %s)"] * len(order_items_data))
             values_data = []
             for pid, qty, price in order_items_data:
@@ -64,9 +60,11 @@ class WriteOrder:
                 f"INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES {values_placeholder}",
                 values_data
             )
-
-            # Commit transaction
             conn.commit()
+
+            # update Redis
+            WriteOrder.update_orders_on_redis(order_id, user_id, items)
+
             return cursor.lastrowid
 
         except Exception as e:
@@ -80,22 +78,33 @@ class WriteOrder:
         conn = get_mysql_conn()
         cur = conn.cursor()
         try:
-            # delete order; foreign keys will remove items
             cur.execute("DELETE FROM orders WHERE id=%s", (order_id,))
             conn.commit()
+
+            # TODO: remove orders from redis
             r = get_redis_conn()
-            # invalidate caches that depend on orders
-            # TODO: update cache, do not simply invalidate
-            r.delete('best_selling_products')
-            r.delete('highest_spending_users')
+            existing_orders = r.get('orders')
+            if existing_orders:
+                pass
+
             return cur.rowcount
+        except Exception as e:
+            conn.rollback()
+            raise e
         finally:
             cur.close()
             conn.close()
 
-    def update_best_selling_products():
-        pass
+    def update_orders_on_redis(order_id, user_id, items):
+        r = get_redis_conn()
+        existing_orders = r.get('orders')
+        order_obj = {"order_id": order_id, "user_id": user_id, "items": items}
+        if existing_orders == {}:
+            orders_string = json.dumps([order_obj], separators=(',', ':'))
+        else:
+            existing_orders_list = json.loads(existing_orders)
+            print(existing_orders_list)
+            orders_string = json.dumps([order_obj] + existing_orders_list, separators=(',', ':'))
+        r.set('orders', orders_string)
 
-    def update_highest_spending_users():
-        pass
 
