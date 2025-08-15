@@ -1,11 +1,11 @@
 """
-Tests for main
+Tests for orders manager
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 import pytest
-from ..main import app
+from order_manager import app
 
 @pytest.fixture
 def client():
