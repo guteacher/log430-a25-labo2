@@ -1,7 +1,12 @@
+"""
+Database connections
+SPDX - License - Identifier: LGPL - 3.0 - or -later
+Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
+"""
+
+
 import mysql.connector
-from mysql.connector import Error
 import redis
-import json
 import config
 
 def get_mysql_conn():
@@ -16,10 +21,3 @@ def get_mysql_conn():
 def get_redis_conn():
     return redis.Redis(host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB, decode_responses=True)
 
-# Helper to cache query results in redis (simple serializer)
-def cache_set(redis_conn, key, value):
-    redis_conn.set(key, json.dumps(value))
-
-def cache_get(redis_conn, key):
-    v = redis_conn.get(key)
-    return json.loads(v) if v else None
