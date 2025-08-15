@@ -45,12 +45,13 @@ CREATE TABLE order_items (
 
 -- Mock data: users
 INSERT INTO users (name, email) VALUES
-('Alice Example', 'alice@example.com'),
-('Bob Sample', 'bob@example.com'),
-('Carlos Silva', 'carlos@example.com');
+('Ada Lovelace', 'alovelace@example.com'),
+('Adele Goldberg', 'agoldberg@example.com'),
+('Alan Turing', 'aturing@example.com');
 
 -- Mock data: products
 INSERT INTO products (name, sku, price) VALUES
-('Widget A', 'WIDGET-A', 9.99),
-('Widget B', 'WIDGET-B', 19.50),
-('Gadget C', 'GADGET-C', 5.75);
+('Laptop ABC', 'LAPTOP-ABC', 1999.99),
+('Keyboard DEF', 'KEYBOARD-DEF', 59.50),
+('Gadget XYZ', 'GADGET-XYZ', 5.75),
+('27-inch Screen WYZ', 'SCREEN-WYZ', 299.75);
