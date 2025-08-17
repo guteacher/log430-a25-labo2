@@ -54,7 +54,7 @@ Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL,
 
 > 💡 Question 3 : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
-### 5. Test : effacer une commande
+### 5. Test : supprimer une commande
 Testez en utilisant la route `DELETE orders` à Postman.
 
 > 💡 Question 4 : Quel résultat de requête avez-vous obtenu? Veuillez inclure la sortie à Postman pour illustrer votre réponse.

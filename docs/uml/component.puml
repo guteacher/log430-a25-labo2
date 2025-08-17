@@ -1,4 +1,3 @@
 @startuml 
-    [Gestion des utilisateurs]
-    [Gestion des articles]
+    [Gestion des commandes]
 @enduml

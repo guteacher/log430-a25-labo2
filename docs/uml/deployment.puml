@@ -2,8 +2,8 @@
   node Conteneur {
     component "store_manager.py" 
     database "MySQL"
-    database "MongoDB"
+    database "Redis"
     "store_manager.py" <--> "MySQL"
-    "store_manager.py" <--> "MongoDB"
+    "store_manager.py" <--> "Redis"
   }
 @enduml
