@@ -42,12 +42,12 @@ order_manager:
 ### 2. Insérer dans Redis
 Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, insérez-la également dans Redis. Cela permettra de générer des rapports statistiques sur les commandes sans avoir à lire directement dans MySQL. Pour une application à forte charge (grand nombre de requêtes), cela permet de réduire la pression sur MySQL.
 
-> 💡 Question 1 : Quelles commandes avez-vous utilisées pour ajouter des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+> 💡 Question 1 : Quelles methodes avez-vous utilisées pour ajouter des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
 ### 3. Supprimer dans Redis
 Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL, supprimez-la également de Redis afin de maintenir la consistance des données.
 
-> 💡 Question 2 : Quelles commandes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+> 💡 Question 2 : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
 ### 4. Créer un rapport : highest_spenders
 Dans `queries/read_order.py`, créez une méthode qui obtient la liste des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
@@ -57,8 +57,8 @@ Dans `queries/read_order.py`, créez une méthode qui obtient la liste des utili
 ### 5. Insérer les produits dans Redis
 Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, mettez également à jour dans Redis le nombre de fois que chaque article a été commandé. Si l’article existe déjà, incrémentez la valeur. Exemple :
 ```python
-count = r.get("product:1")
-r.set("product:1", int(count) + 1 if count else 1)
+count = r.get("product:123")
+r.set("product:123", int(count) + 1 if count else 1)
 ```
 
 ### 6. Créer un rapport : best_sellers
