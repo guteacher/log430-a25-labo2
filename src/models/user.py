@@ -4,12 +4,12 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
-from sqlalchemy import Column, Integer, Float
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
 from models.base import Base
 
 class User(Base):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    price = Column(Float, nullable=False)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
