@@ -1,25 +1,71 @@
-# LOG430 - TODO: Titre du labo
+# Labo 02 – Architecture monolithique, ORM, DDD, CQRS, Persistance polyglotte
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Ets_quebec_logo.png" width="250">    
+ÉTS - LOG430 - Architecture logicielle - Chargé de laboratoire: Gabriel C. Ullmann, Automne 2025.    
 
-🎯 Objectifs d’apprentissage
-- Comprendre et mettre en pratique le pattern CQRS (séparer les opérations de lecture/écriture).
-- Intégrer une API Flask avec MySQL (write) et Redis (read cache).
-- Écrire des tests de fumée et configurer une CI simple avec GitHub Actions.
+## 🎯 Objectifs d’apprentissage
+- Comprendre ce qu’est une architecture monolithique à travers l’exemple d’une application de gestion de magasin.
+- Comprendre et appliquer les patrons CQRS (Command Query Responsibility Segregation) et DDD (Domain-Driven Design).
+- Comprendre et appliquer le CQRS avec une persistance polyglotte afin d’optimiser les opérations de lecture et d’écriture.
+- Comprendre l’importance d’un ORM (Object-Relational Mapping) pour faciliter l’interaction avec les bases de données.
 
-⚙️ Setup
-1. Copier le fichier `.env` et ajuster les variables (MySQL / Redis).
-2. Démarrer les services:
-   - `docker-compose up --build`
-3. Installer les dépendances:
-   - `pip install -r requirements.txt`
-4. Initialiser la DB:
-   - Exécuter le script SQL dans `db-init/init.sql` contre la base MySQL.
+## ⚙️ Mise en place
+Dans ce laboratoire, vous développerez une application de gestion de magasin similaire à celle du labo 01. Cependant, cette application sera plus complexe puisqu’elle permettra la gestion des commandes, des articles et des utilisateurs.
 
-🧪 Activités pratiques
-- Ajouter / supprimer / consulter des commandes (orders) via l'API.
-- Étendre les modèles read/write et améliorer la logique de ranking.
+L’application est une API qui reçoit des requêtes d’un front-end, puis communique avec un serveur de base de données pour retourner les informations (architecture en trois couches).
 
-📦 Livrables
-- Projet source Python avec API Flask
-- Scripts d'initialisation de la base de données
-- Docker + docker-compose
-- Tests unitaires de base et CI GitHub Actions
+### 1. Faites un fork et cloner le dépôt GitLab
+```bash
+git clone https://github.com/guteacher/log430-a25-labo2
+cd log430-a25-labo2
+```
+
+### 2. Préparez l’environnement de développement
+Suivez les mêmes étapes que dans le laboratoire 00.
+
+### 3. Installez Postman
+Installez Postman et importez la collection disponible dans /docs/collections.
+
+## 🧪 Activités pratiques
+
+### 1. Permettre l’accès à l’API
+
+Ouvrez le port 5000 dans le fichier docker-compose.yml afin de permettre l’accès à l’API via Postman :
+```yaml
+order_manager:
+  build: .
+  volumes:
+    - .:/app
+  ports:
+    - "5000:5000"
+```
+
+### 2. Insérer dans Redis
+Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, insérez-la également dans Redis. Cela permettra de générer des rapports statistiques sur les commandes sans avoir à lire directement dans MySQL. Pour une application à forte charge (grand nombre de requêtes), cela permet de réduire la pression sur MySQL.
+
+> 💡 Question 1 : Quelles commandes avez-vous utilisées pour ajouter des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+
+### 3. Supprimer dans Redis
+Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL, supprimez-la également de Redis afin de maintenir la consistance des données.
+
+> 💡 Question 2 : Quelles commandes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+
+### 4. Créer un rapport : highest_spenders
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
+
+> 💡 Question 3 : Comment avez-vous testé cette route dans Postman ? Veuillez inclure votre collection Postman pour illustrer votre réponse.
+
+### 5. Insérer les produits dans Redis
+Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, mettez également à jour dans Redis le nombre de fois que chaque article a été commandé. Si l’article existe déjà, incrémentez la valeur. Exemple :
+```python
+count = r.get("product:1")
+r.set("product:1", int(count) + 1 if count else 1)
+```
+
+### 6. Créer un rapport : best_sellers
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus commandés. Triez le résultat par nombre de commandes (ordre décroissant).
+
+> 💡 Question 4 : Pourrions-nous réaliser l’activité 6 sans avoir fait l’activité 5 au préalable ? Quels en seraient les impacts sur la performance ?
+
+## 📦 Livrables
+- Un fichier .zip contenant l’intégralité du code source du projet Labo 02.
+- Un rapport en .pdf répondant aux 4 questions présentées dans ce document. Il est obligatoire d’illustrer vos réponses avec du code ou des captures de terminal.
