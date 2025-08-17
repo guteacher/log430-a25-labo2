@@ -1,0 +1,20 @@
+"""
+Order class
+SPDX - License - Identifier: LGPL - 3.0 - or -later
+Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
+"""
+
+from sqlalchemy import Column, Integer, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from models.base import Base
+
+class Order(Base):
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    total_amount = Column(Float, nullable=False)
+    
+    # Relationship to order items
+    order_items = relationship("OrderItem", back_populates="order", cascade="all, delete-orphan")

@@ -5,29 +5,25 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 import json
-from db import get_mysql_conn, get_redis_conn
+from models.product import Product
+from models.order_item import OrderItem
+from models.order import Order
+from db import get_sqlalchemy_session, get_redis_conn
 
 def add_order(user_id: int, items: list):
     if not items:
         raise ValueError("Cannot create order. An order must have 1 or more items.")
 
     product_ids = [item['product_id'] for item in items]
-
-    # démarrer une connexion MySQL
-    conn = get_mysql_conn()
-    cursor = conn.cursor(dictionary=True) 
+    session = get_sqlalchemy_session()
 
     try:
-        # sélectionner : products
-        placeholders = ", ".join(["%s"] * len(product_ids))
-        cursor.execute(
-            f"SELECT id, price FROM products WHERE id IN ({placeholders})",
-            product_ids
-        )
-        products_data = cursor.fetchall()
-        price_map = {row["id"]: row["price"] for row in products_data}
+        products_query = session.query(Product).filter(Product.id.in_(product_ids)).all()
+        price_map = {product.id: product.price for product in products_query}
+        
         total_amount = 0
         order_items_data = []
+        
         for item in items:
             pid = item["product_id"]
             qty = item["quantity"]
@@ -38,54 +34,59 @@ def add_order(user_id: int, items: list):
             unit_price = price_map[pid]
             total_amount += unit_price * qty
 
-            order_items_data.append((pid, qty, unit_price))
+            order_items_data.append({
+                'product_id': pid,
+                'quantity': qty,
+                'unit_price': unit_price
+            })
 
-        # insérer : order
-        cursor.execute(
-            "INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)",
-            (user_id, total_amount)
-        )
-        order_id = cursor.lastrowid
+        new_order = Order(user_id=user_id, total_amount=total_amount)
+        session.add(new_order)
+        session.flush() 
+        
+        order_id = new_order.id
 
-        # insérer : order_item (MySQL)
-        values_placeholder = ", ".join(["(%s, %s, %s, %s)"] * len(order_items_data))
-        values_data = []
-        for pid, qty, price in order_items_data:
-            values_data.extend([order_id, pid, qty, price])
+        for item_data in order_items_data:
+            order_item = OrderItem(
+                order_id=order_id,
+                product_id=item_data['product_id'],
+                quantity=item_data['quantity'],
+                unit_price=item_data['unit_price']
+            )
+            session.add(order_item)
 
-        cursor.execute(
-            f"INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES {values_placeholder}",
-            values_data
-        )
-        conn.commit()
+        session.commit()
 
-        # insérer : order (Redis)
+        # Insert order into Redis
         add_order_to_redis(order_id, user_id, total_amount, items)
 
-        return cursor.lastrowid
+        return order_id
 
     except Exception as e:
-        conn.rollback()
+        session.rollback()
         raise e
     finally:
-        cursor.close()
-        conn.close()
+        session.close()
 
 def remove_order(order_id: int):
-    conn = get_mysql_conn()
-    cur = conn.cursor()
+    session = get_sqlalchemy_session()
+    
     try:
-        cur.execute("DELETE FROM orders WHERE id=%s", (order_id,))
-        conn.commit()
-         # supprimer : order (Redis)
-        remove_order_from_redis(order_id)
-        return cur.rowcount
+        order = session.query(Order).filter(Order.id == order_id).first()
+        
+        if order:
+            session.delete(order)
+            session.commit()
+            remove_order_from_redis(order_id)
+            return 1  
+        else:
+            return 0  
+            
     except Exception as e:
-        conn.rollback()
+        session.rollback()
         raise e
     finally:
-        cur.close()
-        conn.close()
+        session.close()
 
 def add_order_to_redis(order_id, user_id, total_amount, items):
     r = get_redis_conn()
