@@ -4,8 +4,9 @@
 
 ## 🎯 Objectifs d’apprentissage
 - Comprendre ce qu’est une architecture monolithique à travers l’exemple d’une application de gestion de magasin.
-- Comprendre et appliquer les patrons CQRS (Command Query Responsibility Segregation) et DDD (Domain-Driven Design).
+- Comprendre et appliquer les patrons CQRS (Command Query Responsibility Segregation) pour séparer les opérations de lecture e écrite. 
 - Comprendre et appliquer le CQRS avec une persistance polyglotte afin d’optimiser les opérations de lecture et d’écriture.
+- Observer l'utilisation du DDD (Domain-Driven Design) pour bien nommer les entités et pour séparer la logique de l'application et de l'infrastructure dans cette application.
 - Comprendre l’importance d’un ORM (Object-Relational Mapping) pour faciliter l’interaction avec les bases de données.
 
 ## ⚙️ Setup
@@ -75,7 +76,7 @@ r.set("product:123", int(count) + 1 if count else 1)
 ```
 
 ### 9. Créer un rapport : best_sellers
-Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus commandés. Triez le résultat par nombre de commandes (ordre décroissant).
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus vendus. Triez le résultat par nombre de commandes (ordre décroissant).
 
 > 💡 Question 6 : Pourrions-nous réaliser l’activité 6 sans avoir fait l’activité 5 au préalable ? Quels en seraient les impacts sur la performance ?
 

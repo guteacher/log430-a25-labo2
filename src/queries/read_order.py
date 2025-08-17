@@ -8,10 +8,12 @@ from db import get_redis_conn
 from collections import defaultdict
 
 def get_order_by_id(order_id):
+    """Get order by ID from Redis"""
     r = get_redis_conn()
     return r.hgetall(order_id)
 
 def get_highest_spending_users():
+    """Get report of highest spending users"""
     r = get_redis_conn()
     limit = 10
     result = []
@@ -36,4 +38,5 @@ def get_highest_spending_users():
     return result
 
 def get_best_selling_products():
+    """Get report of best selling products"""
     return []

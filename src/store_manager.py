@@ -10,33 +10,38 @@ from controllers.order_controller import create_order, delete_order
 
 app = Flask(__name__)
 
-# observability routes
 @app.get('/health')
 def health():
+    """Return OK if app is up and running"""
     return jsonify({'status':'ok'})
 
 # write routes (Commands)
 @app.post('/orders')
 def post_orders():
+    """Create a new order based on information on request body"""
     return create_order(request)
 
 @app.delete('/orders/<int:order_id>')
 def delete_orders_id(order_id):
+    """Delete an order with a given order_id"""
     return delete_order(order_id)
 
 # read routes (Queries) 
 @app.get('/orders/<int:order_id>')
 def get_order(order_id):
+    """Get order with a given order_id"""
     return get_order(order_id)
-
-@app.get('/orders/reports/best_sellers')
-def get_best_selling_products():
-    rows = get_best_selling_products()
-    return jsonify(rows)
 
 @app.get('/orders/reports/highest_spenders')
 def get_users_ranked():
+    """Get list of highest speding users, order by total expenditure"""
     rows = get_highest_spending_users()
+    return jsonify(rows)
+
+@app.get('/orders/reports/best_sellers')
+def get_best_selling_products():
+    """Get list of best selling products, order by number of orders"""
+    rows = get_best_selling_products()
     return jsonify(rows)
 
 # démarrer l'application Flask 

@@ -10,7 +10,8 @@ from models.order_item import OrderItem
 from models.order import Order
 from db import get_sqlalchemy_session, get_redis_conn
 
-def add_order(user_id: int, items: list):
+def insert_order(user_id: int, items: list):
+    """Insert order with items in MySQL, keep Redis in sync"""
     if not items:
         raise ValueError("Cannot create order. An order must have 1 or more items.")
 
@@ -58,7 +59,7 @@ def add_order(user_id: int, items: list):
         session.commit()
 
         # Insert order into Redis
-        add_order_to_redis(order_id, user_id, total_amount, items)
+        insert_order_to_redis(order_id, user_id, total_amount, items)
 
         return order_id
 
@@ -68,7 +69,8 @@ def add_order(user_id: int, items: list):
     finally:
         session.close()
 
-def remove_order(order_id: int):
+def delete_order(order_id: int):
+    """Delete order in MySQL, keep Redis in sync"""
     session = get_sqlalchemy_session()
     try:
         order = session.query(Order).filter(Order.id == order_id).first()
@@ -76,7 +78,7 @@ def remove_order(order_id: int):
         if order:
             session.delete(order)
             session.commit()
-            remove_order_from_redis(order_id)
+            delete_order_from_redis(order_id)
             return 1  
         else:
             return 0  
@@ -87,7 +89,8 @@ def remove_order(order_id: int):
     finally:
         session.close()
 
-def add_order_to_redis(order_id, user_id, total_amount, items):
+def insert_order_to_redis(order_id, user_id, total_amount, items):
+    """Insert order to Redis"""
     r = get_redis_conn()
     r.hset(
         f"order:{order_id}",
@@ -98,7 +101,8 @@ def add_order_to_redis(order_id, user_id, total_amount, items):
         }
     )
 
-def remove_order_from_redis(order_id):
+def delete_order_from_redis(order_id):
+    """Delete order from Redis"""
     r = get_redis_conn()
     r.delete(f"order:{order_id}")
 

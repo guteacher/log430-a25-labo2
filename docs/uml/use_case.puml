@@ -1,6 +1,6 @@
 @startuml
     Vendeur.euse --> (Ajouter une commande)
-    Vendeur.euse --> (supprimer une commande)
-    Directeur --> (Voir rapport : les plus grands acheteurs)
-    Directeur --> (Voir rapport : les articles plus vendus)
+    Vendeur.euse --> (Supprimer une commande)
+    Directeur.trice --> (Voir rapport : les plus grands acheteurs)
+    Directeur.trice --> (Voir rapport : les articles plus vendus)
 @enduml
