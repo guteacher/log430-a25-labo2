@@ -70,7 +70,6 @@ def add_order(user_id: int, items: list):
 
 def remove_order(order_id: int):
     session = get_sqlalchemy_session()
-    
     try:
         order = session.query(Order).filter(Order.id == order_id).first()
         

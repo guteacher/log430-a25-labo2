@@ -1,9 +1,9 @@
 @startuml
   node Conteneur {
-    component "main.py" 
+    component "store_manager.py" 
     database "MySQL"
     database "MongoDB"
-    "main.py" <--> "MySQL"
-    "main.py" <--> "MongoDB"
+    "store_manager.py" <--> "MySQL"
+    "store_manager.py" <--> "MongoDB"
   }
 @enduml

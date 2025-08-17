@@ -5,7 +5,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 import pytest
-from order_manager import app
+from store_manager import app
 
 @pytest.fixture
 def client():
@@ -14,6 +14,6 @@ def client():
         yield client
 
 def test_health(client):
-    rv = client.get('/health')
-    assert rv.status_code == 200
-    assert rv.get_json() == {'status':'ok'}
+    result = client.get('/health')
+    assert result.status_code == 200
+    assert result.get_json() == {'status':'ok'}

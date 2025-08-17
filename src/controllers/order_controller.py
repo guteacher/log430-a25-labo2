@@ -3,6 +3,7 @@ Order controller
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
+
 from flask import jsonify
 from commands.write_order import add_order, remove_order
 from queries.read_order import get_order_by_id
