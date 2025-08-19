@@ -26,7 +26,6 @@ def insert_product(name: str, sku: str, price: float):
     finally:
         session.close()
 
-
 def delete_product(product_id: int):
     """Delete product in MySQL"""
     session = get_sqlalchemy_session()
