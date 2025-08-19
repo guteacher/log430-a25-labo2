@@ -13,8 +13,6 @@ def create_order(request):
     payload = request.get_json() or {}
     user_id = payload.get('user_id')
     items = payload.get('items', [])
-    if not user_id or not items:
-        return jsonify({'error':'user_id and items are required'}), 400
     try:
         order_id = insert_order(user_id, items)
         return jsonify({'order_id': order_id}), 201

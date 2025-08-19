@@ -4,7 +4,7 @@
 
 ## 🎯 Objectifs d’apprentissage
 - Comprendre ce qu’est une architecture monolithique à travers l’exemple d’une application de gestion de magasin.
-- Comprendre et appliquer les patrons CQRS (Command Query Responsibility Segregation) pour séparer les opérations de lecture e écrite. 
+- Comprendre et appliquer les patrons CQRS (Command Query Responsibility Segregation) pour séparer les opérations de lecture et écrite. 
 - Comprendre et appliquer le CQRS avec une persistance polyglotte afin d’optimiser les opérations de lecture et d’écriture.
 - Observer l'utilisation du DDD (Domain-Driven Design) pour bien nommer les entités et pour séparer la logique de l'application et de l'infrastructure dans cette application.
 - Comprendre l’importance d’un ORM (Object-Relational Mapping) pour faciliter l’interaction avec les bases de données.
