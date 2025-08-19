@@ -8,6 +8,7 @@ from models.product_stock import ProductStock
 from db import get_redis_conn, get_sqlalchemy_session
 
 def set_stock_for_product(product_id, quantity):
+    """Set stock quantity for product in MySQL"""
     session = get_sqlalchemy_session()
     try: 
         result = session.execute(
@@ -33,9 +34,8 @@ def set_stock_for_product(product_id, quantity):
     finally:
         session.close()
     
-
-def update_stocks_mysql(session, order_items, operation):
-    """ Update stock quantities in MySQL """
+def update_stock_mysql(session, order_items, operation):
+    """ Update stock quantities in MySQL according to a given operation (+/-) """
     try:
         for item in order_items:
             if hasattr(order_items[0], 'product_id'):
@@ -57,13 +57,13 @@ def update_stocks_mysql(session, order_items, operation):
     
 def check_out_items_from_stock(session, order_items):
     """ Decrease stock quantities in Redis """
-    update_stocks_mysql(session, order_items, "-")
+    update_stock_mysql(session, order_items, "-")
     
 def check_in_items_to_stock(session, order_items):
     """ Increase stock quantities in Redis """
-    update_stocks_mysql(session, order_items, "+")
+    update_stock_mysql(session, order_items, "+")
 
-def update_stocks_redis(order_items, operation):
+def update_stock_redis(order_items, operation):
     """ Update stock quantities in Redis """
     if not order_items:
         return
@@ -94,13 +94,10 @@ def update_stocks_redis(order_items, operation):
     
     else:
         _populate_redis_from_mysql(r)
-        update_stocks_redis(order_items, operation)
-
+        update_stock_redis(order_items, operation)
 
 def _populate_redis_from_mysql(redis_conn):
-    """
-    Helper function to populate Redis from MySQL product_stocks table
-    """
+    """ Helper function to populate Redis from MySQL product_stocks table """
     session = get_sqlalchemy_session()
     try:
         stocks = session.execute(

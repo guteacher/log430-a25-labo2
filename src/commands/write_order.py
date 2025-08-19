@@ -8,7 +8,7 @@ import json
 from models.order import Order
 from models.product import Product
 from models.order_item import OrderItem
-from commands.write_stock import check_in_items_to_stock, check_out_items_from_stock, update_stocks_redis
+from commands.write_stock import check_in_items_to_stock, check_out_items_from_stock, update_stock_redis
 from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
@@ -57,13 +57,13 @@ def insert_order(user_id: int, items: list):
             )
             session.add(order_item)
 
-        # Update stocks
+        # Update stock
         check_out_items_from_stock(session, order_items)
 
         session.commit()
 
         # Insert order into Redis
-        update_stocks_redis(order_items, '-')
+        update_stock_redis(order_items, '-')
         insert_order_to_redis(order_id, user_id, total_amount, items)
         return order_id
 
@@ -87,7 +87,7 @@ def delete_order(order_id: int):
             session.commit()
 
             # Redis
-            update_stocks_redis(order_items, '+')
+            update_stock_redis(order_items, '+')
             delete_order_from_redis(order_id)
             return 1  
         else:

@@ -6,7 +6,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 
 from flask import jsonify
 from commands.write_order import insert_order, delete_order
-from queries.read_order import get_order_by_id
+from queries.read_order import get_order_by_id, get_best_selling_products, get_highest_spending_users
 
 def create_order(request):
     """Create order, use WriteOrder model"""
@@ -36,3 +36,11 @@ def get_order(order_id):
         return jsonify(order), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def get_report_highest_spending_users():
+    """Get orders report: highest spending users"""
+    return get_highest_spending_users()
+
+def get_report_best_selling_products():
+    """Get orders report: best selling products"""
+    return get_best_selling_products()

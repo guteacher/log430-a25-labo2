@@ -5,7 +5,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 from flask import jsonify
-from queries.read_product_stock import get_product_stock_by_id
+from queries.read_product_stock import get_product_stock_by_id, get_stock_for_all_products
 from commands.write_stock import set_stock_for_product
 
 def set_product_stock(request):
@@ -19,10 +19,14 @@ def set_product_stock(request):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def get_stock_by_product_id(product_id):
+def get_stock(product_id):
     """Get stock quantities of a product"""
     try:
         product_stock = get_product_stock_by_id(product_id)
         return jsonify(product_stock), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def get_stock_overview():
+    """Get stock for all products"""
+    return get_stock_for_all_products()

@@ -59,10 +59,10 @@ INSERT INTO users (name, email) VALUES
 
 -- Mock data: products
 INSERT INTO products (name, sku, price) VALUES
-('Laptop ABC', 'LAPTOP-ABC', 1999.99),
-('Keyboard DEF', 'KEYBOARD-DEF', 59.50),
-('Gadget XYZ', 'GADGET-XYZ', 5.75),
-('27-inch Screen WYZ', 'SCREEN-WYZ', 299.75);
+('Laptop ABC', 'LP12567', 1999.99),
+('Keyboard DEF', 'KB67890', 59.50),
+('Gadget XYZ', 'GG12345', 5.75),
+('27-inch Screen WYZ', 'SC27289', 299.75);
 
 -- Mock data: product stocks
 INSERT INTO product_stocks (product_id, quantity) VALUES

@@ -5,11 +5,10 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 from flask import Flask, request, jsonify
-from queries.read_order import get_best_selling_products, get_highest_spending_users
-from controllers.order_controller import create_order, remove_order
+from controllers.order_controller import create_order, remove_order, get_report_highest_spending_users, get_report_best_selling_products
 from controllers.product_controller import create_product
 from controllers.user_controller import create_user
-from controllers.product_stock_controller import get_stock_by_product_id, set_product_stock
+from controllers.product_stock_controller import get_stock, set_product_stock, get_stock_overview
  
 app = Flask(__name__)
 
@@ -53,18 +52,24 @@ def get_order(order_id):
 @app.post('/product_stocks/<int:product_id>')
 def get_product_stocks(product_id):
     """Get product stocks by product_id"""
-    return get_stock_by_product_id(product_id)
+    return get_stock(product_id)
 
 @app.get('/orders/reports/highest_spenders')
-def get_users_ranked():
+def get_orders_highest_spending_users():
     """Get list of highest speding users, order by total expenditure"""
-    rows = get_highest_spending_users()
+    rows = get_report_highest_spending_users()
     return jsonify(rows)
 
 @app.get('/orders/reports/best_sellers')
-def get_best_selling_products():
+def get_orders_report_best_selling_products():
     """Get list of best selling products, order by number of orders"""
-    rows = get_best_selling_products()
+    rows = get_report_best_selling_products()
+    return jsonify(rows)
+
+@app.get('/product_stocks/reports/overview')
+def get_product_stocks_overview():
+    """Get stocks for all products"""
+    rows = get_stock_overview()
     return jsonify(rows)
 
 # Start Flask app
