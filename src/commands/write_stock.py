@@ -4,7 +4,35 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 from sqlalchemy import text
+from models.product_stock import ProductStock
 from db import get_redis_conn, get_sqlalchemy_session
+
+def set_stock_for_product(product_id, quantity):
+    session = get_sqlalchemy_session()
+    try: 
+        result = session.execute(
+            text(f"""
+                UPDATE product_stocks 
+                SET quantity = :qty 
+                WHERE product_id = :pid
+            """),
+            {"pid": product_id, "qty": quantity}
+        )
+        if result.rowcount == 0:
+                new_product_stock = ProductStock(product_id=product_id, quantity=quantity)
+                session.add(new_product_stock)
+                session.flush() 
+                session.commit()
+                return new_product_stock.product_id
+        session.flush() 
+        session.commit()
+        return f"rows updated: {result.rowcount}"
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+    
 
 def update_stocks_mysql(session, order_items, operation):
     """ Update stock quantities in MySQL """

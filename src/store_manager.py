@@ -9,6 +9,8 @@ from queries.read_order import get_best_selling_products, get_highest_spending_u
 from controllers.order_controller import create_order, remove_order
 from controllers.product_controller import create_product
 from controllers.user_controller import create_user
+from controllers.product_stock_controller import get_stock_by_product_id, set_product_stock
+ 
 app = Flask(__name__)
 
 @app.get('/health')
@@ -24,12 +26,17 @@ def post_orders():
 
 @app.post('/products')
 def products():
-    """Get order with a given xxxx"""
+    """Create a new product based on information on request body"""
     return create_product(request)
+
+@app.post('/product_stocks')
+def product_stocks():
+    """Set product stock based on information on request body"""
+    return set_product_stock(request)
 
 @app.post('/users')
 def users():
-    """Get order with a given xxxxx"""
+    """Create a new user based on information on request body"""
     return create_user(request)
 
 @app.delete('/orders/<int:order_id>')
@@ -42,6 +49,11 @@ def delete_orders_id(order_id):
 def get_order(order_id):
     """Get order with a given order_id"""
     return get_order(order_id)
+
+@app.post('/product_stocks/<int:product_id>')
+def get_product_stocks(product_id):
+    """Get product stocks by product_id"""
+    return get_stock_by_product_id(product_id)
 
 @app.get('/orders/reports/highest_spenders')
 def get_users_ranked():

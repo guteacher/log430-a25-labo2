@@ -1,0 +1,13 @@
+"""
+Product class (value object)
+SPDX - License - Identifier: LGPL - 3.0 - or -later
+Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
+"""
+
+from sqlalchemy import Column, Integer, Float, String
+from models.base import Base
+
+class ProductStock(Base):
+    __tablename__ = 'product_stocks'
+    product_id = Column(Integer, primary_key=True, nullable=False)
+    quantity = Column(Float, nullable=False)
