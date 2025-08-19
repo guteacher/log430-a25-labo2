@@ -24,12 +24,12 @@ def post_orders():
 
 @app.post('/products')
 def products():
-    """Get order with a given xxxx"""
+    """Create a new product based on information on request body"""
     return create_product(request)
 
 @app.post('/users')
 def users():
-    """Get order with a given xxxxx"""
+    """Create a new user based on information on request body"""
     return create_user(request)
 
 @app.delete('/orders/<int:order_id>')
