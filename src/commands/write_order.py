@@ -5,9 +5,10 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 import json
+from sqlalchemy import text
+from models.order import Order
 from models.product import Product
 from models.order_item import OrderItem
-from models.order import Order
 from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
@@ -56,11 +57,13 @@ def insert_order(user_id: int, items: list):
             )
             session.add(order_item)
 
+        # Update stocks
+        update_stocks(session, order_items_data)
+
         session.commit()
 
         # Insert order into Redis
         insert_order_to_redis(order_id, user_id, total_amount, items)
-
         return order_id
 
     except Exception as e:
@@ -79,6 +82,10 @@ def delete_order(order_id: int):
             session.delete(order)
             session.commit()
             delete_order_from_redis(order_id)
+
+            order_items_data = session.query(OrderItem).filter(OrderItem.order_id == order_id).first()
+            update_stocks(session, order_items_data)
+
             return 1  
         else:
             return 0  
@@ -88,6 +95,32 @@ def delete_order(order_id: int):
         raise e
     finally:
         session.close()
+
+def update_stocks(session, order_items_data):
+    try:
+        when_clauses = []
+        params = {}
+        product_ids = [str(item['product_id']) for item in order_items_data]
+        product_ids_str = ",".join(product_ids)
+        for i, item in enumerate(order_items_data):
+            pid = item['product_id']
+            qty = item['quantity']
+            when_clauses.append(f"WHEN product_id = :pid_{i} THEN :qty_{i}")
+            params[f'pid_{i}'] = pid
+            params[f'qty_{i}'] = qty
+        
+        when_clause_str = " ".join(when_clauses)
+        
+        query = text(f"""
+            UPDATE product_stocks 
+            SET quantity = quantity - (CASE {when_clause_str} END),
+            WHERE product_id IN ({product_ids_str})
+            AND quantity >= (CASE {when_clause_str} END)
+        """)
+        print(query, params) 
+        session.execute(query, params)
+    except Exception as e:
+        raise e
 
 def insert_order_to_redis(order_id, user_id, total_amount, items):
     """Insert order to Redis"""

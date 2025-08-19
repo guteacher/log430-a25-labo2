@@ -43,6 +43,14 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
 
+-- Product stocks 
+DROP TABLE IF EXISTS product_stocks;
+CREATE TABLE product_stocks (
+    product_id INT PRIMARY KEY,
+    quantity INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+);
+
 -- Mock data: users
 INSERT INTO users (name, email) VALUES
 ('Ada Lovelace', 'alovelace@example.com'),
