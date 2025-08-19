@@ -19,7 +19,7 @@ def create_order(request):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def delete_order(order_id):
+def remove_order(order_id):
     """Delete order, use WriteOrder model"""
     try:
         deleted = delete_order(order_id)

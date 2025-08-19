@@ -6,7 +6,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 
 from flask import Flask, request, jsonify
 from queries.read_order import get_best_selling_products, get_highest_spending_users
-from controllers.order_controller import create_order, delete_order
+from controllers.order_controller import create_order, remove_order
 from controllers.product_controller import create_product
 from controllers.user_controller import create_user
 app = Flask(__name__)
@@ -35,7 +35,7 @@ def users():
 @app.delete('/orders/<int:order_id>')
 def delete_orders_id(order_id):
     """Delete an order with a given order_id"""
-    return delete_order(order_id)
+    return remove_order(order_id)
 
 # Read routes (Queries) 
 @app.get('/orders/<int:order_id>')

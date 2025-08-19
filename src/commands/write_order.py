@@ -5,10 +5,10 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 import json
-from sqlalchemy import text
 from models.order import Order
 from models.product import Product
 from models.order_item import OrderItem
+from commands.write_stock import check_in_items_to_stock, check_out_items_from_stock, update_stocks_redis
 from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
@@ -24,7 +24,7 @@ def insert_order(user_id: int, items: list):
         price_map = {product.id: product.price for product in products_query}
         
         total_amount = 0
-        order_items_data = []
+        order_items = []
         
         for item in items:
             pid = item["product_id"]
@@ -36,7 +36,7 @@ def insert_order(user_id: int, items: list):
             unit_price = price_map[pid]
             total_amount += unit_price * qty
 
-            order_items_data.append({
+            order_items.append({
                 'product_id': pid,
                 'quantity': qty,
                 'unit_price': unit_price
@@ -48,21 +48,22 @@ def insert_order(user_id: int, items: list):
         
         order_id = new_order.id
 
-        for item_data in order_items_data:
+        for item in order_items:
             order_item = OrderItem(
                 order_id=order_id,
-                product_id=item_data['product_id'],
-                quantity=item_data['quantity'],
-                unit_price=item_data['unit_price']
+                product_id=item['product_id'],
+                quantity=item['quantity'],
+                unit_price=item['unit_price']
             )
             session.add(order_item)
 
         # Update stocks
-        update_stocks(session, order_items_data)
+        check_out_items_from_stock(session, order_items)
 
         session.commit()
 
         # Insert order into Redis
+        update_stocks_redis(order_items, '-')
         insert_order_to_redis(order_id, user_id, total_amount, items)
         return order_id
 
@@ -77,15 +78,17 @@ def delete_order(order_id: int):
     session = get_sqlalchemy_session()
     try:
         order = session.query(Order).filter(Order.id == order_id).first()
-        
         if order:
+
+            # MySQL
+            order_items = session.query(OrderItem).filter(OrderItem.order_id == order_id).all()
             session.delete(order)
+            check_in_items_to_stock(session, order_items)
             session.commit()
+
+            # Redis
+            update_stocks_redis(order_items, '+')
             delete_order_from_redis(order_id)
-
-            order_items_data = session.query(OrderItem).filter(OrderItem.order_id == order_id).first()
-            update_stocks(session, order_items_data)
-
             return 1  
         else:
             return 0  
@@ -95,32 +98,6 @@ def delete_order(order_id: int):
         raise e
     finally:
         session.close()
-
-def update_stocks(session, order_items_data):
-    try:
-        when_clauses = []
-        params = {}
-        product_ids = [str(item['product_id']) for item in order_items_data]
-        product_ids_str = ",".join(product_ids)
-        for i, item in enumerate(order_items_data):
-            pid = item['product_id']
-            qty = item['quantity']
-            when_clauses.append(f"WHEN product_id = :pid_{i} THEN :qty_{i}")
-            params[f'pid_{i}'] = pid
-            params[f'qty_{i}'] = qty
-        
-        when_clause_str = " ".join(when_clauses)
-        
-        query = text(f"""
-            UPDATE product_stocks 
-            SET quantity = quantity - (CASE {when_clause_str} END),
-            WHERE product_id IN ({product_ids_str})
-            AND quantity >= (CASE {when_clause_str} END)
-        """)
-        print(query, params) 
-        session.execute(query, params)
-    except Exception as e:
-        raise e
 
 def insert_order_to_redis(order_id, user_id, total_amount, items):
     """Insert order to Redis"""

@@ -63,3 +63,10 @@ INSERT INTO products (name, sku, price) VALUES
 ('Keyboard DEF', 'KEYBOARD-DEF', 59.50),
 ('Gadget XYZ', 'GADGET-XYZ', 5.75),
 ('27-inch Screen WYZ', 'SCREEN-WYZ', 299.75);
+
+-- Mock data: product stocks
+INSERT INTO product_stocks (product_id, quantity) VALUES
+(1, 1000),
+(2, 500),
+(3, 2),
+(4. 90);
