@@ -14,7 +14,7 @@ Dans ce laboratoire, vous développerez une application de gestion de magasin si
 
 L’application est une API qui reçoit des requêtes d’un front-end, puis communique avec un serveur de base de données pour retourner les informations (architecture en trois couches).
 
-### 1. Faites un fork et cloner le dépôt GitLab
+### 1. Faites un fork et clonez le dépôt GitLab
 ```bash
 git clone https://github.com/guteacher/log430-a25-labo2
 cd log430-a25-labo2
