@@ -19,15 +19,17 @@ def set_stock_for_product(product_id, quantity):
             """),
             {"pid": product_id, "qty": quantity}
         )
+        response_message = f"rows updated: {result.rowcount}"
         if result.rowcount == 0:
-                new_product_stock = ProductStock(product_id=product_id, quantity=quantity)
-                session.add(new_product_stock)
-                session.flush() 
-                session.commit()
-                return new_product_stock.product_id
-        session.flush() 
-        session.commit()
-        return f"rows updated: {result.rowcount}"
+            new_product_stock = ProductStock(product_id=product_id, quantity=quantity)
+            session.add(new_product_stock)
+            session.flush() 
+            session.commit()
+            response_message = f"rows added: {new_product_stock.product_id}"
+  
+        r = get_redis_conn()
+        r.hset(f"product_stock:{product_id}", "quantity", quantity)
+        return response_message
     except Exception as e:
         session.rollback()
         raise e

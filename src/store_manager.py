@@ -3,7 +3,8 @@ Order manager application
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
-
+from graphene import Schema
+from schemas.query import Query
 from flask import Flask, request, jsonify
 from controllers.order_controller import create_order, remove_order, get_report_highest_spending_users, get_report_best_selling_products
 from controllers.product_controller import create_product
@@ -11,6 +12,7 @@ from controllers.user_controller import create_user
 from controllers.product_stock_controller import get_stock, set_product_stock, get_stock_overview
  
 app = Flask(__name__)
+schema = Schema(query=Query)
 
 @app.get('/health')
 def health():
@@ -71,6 +73,17 @@ def get_product_stocks_overview():
     """Get stocks for all products"""
     rows = get_stock_overview()
     return jsonify(rows)
+
+# Vendor-managed inventory (VMI) route
+@app.route('/product_stocks/graphql', methods=['POST'])
+def graphql_supplier():
+    data = request.get_json()
+    result = schema.execute(data['query'], variables=data.get('variables'))
+    
+    return jsonify({
+        'data': result.data,
+        'errors': [str(e) for e in result.errors] if result.errors else None
+    })
 
 # Start Flask app
 if __name__ == '__main__':
