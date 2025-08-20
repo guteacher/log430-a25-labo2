@@ -58,7 +58,7 @@ def insert_order(user_id: int, items: list):
 
         session.commit()
 
-        # Insert order into Redis
+        # TODO: insert order into Redis
         insert_order_to_redis(order_id, user_id, total_amount, items)
 
         return order_id
@@ -78,6 +78,8 @@ def delete_order(order_id: int):
         if order:
             session.delete(order)
             session.commit()
+
+            # TODO: delete order from Redis
             delete_order_from_redis(order_id)
             return 1  
         else:

@@ -20,6 +20,7 @@ def get_highest_spending_users():
     order_keys = r.keys("order:*")
     spending = defaultdict(float)
     
+    # TODO: complétez la méthode
     for key in order_keys:
         order_data = r.hgetall(key)
         if "user_id" in order_data and "total_amount" in order_data:
@@ -39,4 +40,5 @@ def get_highest_spending_users():
 
 def get_best_selling_products():
     """Get report of best selling products"""
+    # TODO: écrivez la méthode
     return []
