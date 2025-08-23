@@ -21,7 +21,7 @@ cd log430-a25-labo2
 ```
 
 ### 2. Préparez l’environnement de développement
-Suivez les mêmes étapes que dans le laboratoire 00.
+Suivez les mêmes étapes que dans le laboratoire 00. Créez un fichier .env.
 
 ### 3. Installez Postman
 Installez Postman et importez la collection disponible dans /docs/collections.
