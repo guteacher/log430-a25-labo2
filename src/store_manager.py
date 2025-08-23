@@ -5,10 +5,9 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
 from flask import Flask, request, jsonify
-from queries.read_order import get_best_selling_products, get_highest_spending_users
-from controllers.order_controller import create_order, delete_order
-from controllers.product_controller import create_product
-from controllers.user_controller import create_user
+from controllers.order_controller import create_order, remove_order
+from controllers.product_controller import create_product, remove_product, get_product
+from controllers.user_controller import create_user, remove_user, get_user
 app = Flask(__name__)
 
 @app.get('/health')
@@ -22,20 +21,30 @@ def post_orders():
     """Create a new order based on information on request body"""
     return create_order(request)
 
-@app.post('/products')
-def products():
-    """Create a new product based on information on request body"""
-    return create_product(request)
-
-@app.post('/users')
-def users():
-    """Create a new user based on information on request body"""
-    return create_user(request)
-
 @app.delete('/orders/<int:order_id>')
 def delete_orders_id(order_id):
     """Delete an order with a given order_id"""
-    return delete_order(order_id)
+    return remove_order(order_id)
+
+@app.post('/products')
+def post_products():
+    """Create a new product based on information on request body"""
+    return create_product(request)
+
+@app.delete('/products/<int:product_id>')
+def delete_orders_id(product_id):
+    """Delete a product with a given product_id"""
+    return remove_product(product_id)
+
+@app.post('/users')
+def post_users():
+    """Create a new user based on information on request body"""
+    return create_user(request)
+
+@app.delete('/users/<int:user_id>')
+def delete_orders_id(user_id):
+    """Delete a user with a given user_id"""
+    return remove_user(user_id)
 
 # Read routes (Queries) 
 @app.get('/orders/<int:order_id>')
@@ -43,17 +52,25 @@ def get_order(order_id):
     """Get order with a given order_id"""
     return get_order(order_id)
 
+@app.get('/products/<int:product_id>')
+def get_order(product_id):
+    """Get product with a given product_id"""
+    return get_product(product_id)
+
+@app.get('/users/<int:user_id>')
+def get_order(user_id):
+    """Get user with a given user_id"""
+    return get_user(user_id)
+
 @app.get('/orders/reports/highest_spenders')
-def get_users_ranked():
+def get_orders_highest_spending_users():
     """Get list of highest speding users, order by total expenditure"""
-    rows = get_highest_spending_users()
-    return jsonify(rows)
+    return "TODO"
 
 @app.get('/orders/reports/best_sellers')
-def get_best_selling_products():
+def get_orders_report_best_selling_products():
     """Get list of best selling products, order by number of orders"""
-    rows = get_best_selling_products()
-    return jsonify(rows)
+    return "TODO"
 
 # Start Flask app
 if __name__ == '__main__':

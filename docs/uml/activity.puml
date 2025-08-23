@@ -1,6 +1,6 @@
 @startuml
     start
-        :Choisir une option de gestion de commandes;
+        :Choisir une option de gestion des commandes;
         if (Ajouter une commande) then (oui)
             :Ajouter les articles à la commande;
             :Confirmer la commande;

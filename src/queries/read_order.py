@@ -13,7 +13,7 @@ def get_order_by_id(order_id):
     return r.hgetall(order_id)
 
 def get_highest_spending_users():
-    """Get report of highest spending users"""
+    """Get report of top 10 highest spending users"""
     r = get_redis_conn()
     limit = 10
     result = []
@@ -28,7 +28,7 @@ def get_highest_spending_users():
             total = float(order_data["total_amount"])
             spending[user_id] += total
 
-    # trier par total dépensé (décroissant), limite X
+    # trier par total dépensé (décroissant), limite 10
     highest_spending_users = sorted(spending.items(), key=lambda x: x[1], reverse=True)[:limit]
     for user in highest_spending_users:
         result.append({

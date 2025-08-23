@@ -63,8 +63,8 @@ Testez en utilisant la route `DELETE orders` à Postman.
 ### 6. Écrivez les « smoke tests »
 Écrivez les tests unitaires qu'appelent les routes `POST orders` et  `DELETE orders` et vérifient si le résultat est consistent. Utilisez comme exemple le test qu'existe dèjá à `tests/test_store_manager.py`.
 
-### 7. Créer un rapport : highest_spenders
-Dans `queries/read_order.py`, créez une méthode qui obtient la liste des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
+### 7. Créer un rapport : highest_spending_users
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste le top 10 des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
 
 > 💡 Question 5 : Comment avez-vous testé cette route dans Postman ? Veuillez inclure votre collection Postman pour illustrer votre réponse.
 
@@ -75,7 +75,7 @@ count = r.get("product:123")
 r.set("product:123", int(count) + 1 if count else 1)
 ```
 
-### 9. Créer un rapport : best_sellers
+### 9. Créer un rapport : best_selling_products
 Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus vendus. Triez le résultat par nombre de commandes (ordre décroissant).
 
 > 💡 Question 6 : Pourrions-nous réaliser l’activité 6 sans avoir fait l’activité 5 au préalable ? Quels en seraient les impacts sur la performance ?

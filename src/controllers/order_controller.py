@@ -19,7 +19,7 @@ def create_order(request):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def delete_order(order_id):
+def remove_order(order_id):
     """Delete order, use WriteOrder model"""
     try:
         deleted = delete_order(order_id)
@@ -36,3 +36,13 @@ def get_order(order_id):
         return jsonify(order), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+def get_report_highest_spending_users():
+    """Get orders report: highest spending users"""
+    # TODO: appeler la méthode correspondante dans read_order.py
+    return []
+
+def get_report_best_selling_products():
+    """Get orders report: best selling products"""
+    # TODO: appeler la méthode correspondante dans read_order.py
+    return []
