@@ -1,77 +1,45 @@
 """
-Order manager application
+Store manager application
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs
+from views.user_view import show_user_form
+from views.product_view import show_product_form
+from views.order_view import show_order_form
 
-from flask import Flask, request, jsonify
-from controllers.order_controller import create_order, remove_order, get_order
-from controllers.product_controller import create_product, remove_product, get_product
-from controllers.user_controller import create_user, remove_user, get_user
-app = Flask(__name__)
+class StoreManager(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/users":
+            self._send_html(show_user_form())
+        elif self.path == "/products":
+            self._send_html(show_product_form())
+        elif self.path == "/orders":
+            self._send_html(show_order_form())
+        else:
+            self._send_html("<h1>404 Page Not Found</h1>", status=404)
 
-@app.get('/health')
-def health():
-    """Return OK if app is up and running"""
-    return jsonify({'status':'ok'})
+    def do_POST(self):
+        if self.path == "/":
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode("utf-8")
+            params = parse_qs(body)
+            name = params.get("name", ["stranger"])[0]
+            self._send_html(f"""
+                <h1>Hello, {name}!</h1>
+                <a href="/">Back to form</a>
+            """)
+        else:
+            self._send_html("<h1>404 Page Not Found</h1>", status=404)
 
-# Write routes (Commands)
-@app.post('/orders')
-def post_orders():
-    """Create a new order based on information on request body"""
-    return create_order(request)
+    def _send_html(self, html, status=200):
+        self.send_response(status)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+        self.wfile.write(html.encode("utf-8"))
 
-@app.delete('/orders/<int:order_id>')
-def delete_orders_id(order_id):
-    """Delete an order with a given order_id"""
-    return remove_order(order_id)
-
-@app.post('/products')
-def post_products():
-    """Create a new product based on information on request body"""
-    return create_product(request)
-
-@app.delete('/products/<int:product_id>')
-def delete_products_id(product_id):
-    """Delete a product with a given product_id"""
-    return remove_product(product_id)
-
-@app.post('/users')
-def post_users():
-    """Create a new user based on information on request body"""
-    return create_user(request)
-
-@app.delete('/users/<int:user_id>')
-def delete_users_id(user_id):
-    """Delete a user with a given user_id"""
-    return remove_user(user_id)
-
-# Read routes (Queries) 
-@app.get('/orders/<int:order_id>')
-def get_order_id(order_id):
-    """Get order with a given order_id"""
-    return get_order(order_id)
-
-@app.get('/products/<int:product_id>')
-def get_product_id(product_id):
-    """Get product with a given product_id"""
-    return get_product(product_id)
-
-@app.get('/users/<int:user_id>')
-def get_user_id(user_id):
-    """Get user with a given user_id"""
-    return get_user(user_id)
-
-@app.get('/orders/reports/highest_spenders')
-def get_orders_highest_spending_users():
-    """Get list of highest speding users, order by total expenditure"""
-    return "Not implemented yet"
-
-@app.get('/orders/reports/best_sellers')
-def get_orders_report_best_selling_products():
-    """Get list of best selling products, order by number of orders"""
-    return "Not implemented yet"
-
-# Start Flask app
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    server = HTTPServer(("0.0.0.0", 5000), StoreManager)
+    print("Server running on http://0.0.0.0:5000")
+    server.serve_forever()

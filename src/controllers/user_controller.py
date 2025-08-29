@@ -8,11 +8,8 @@ from flask import jsonify
 from commands.write_user import insert_user, delete_user
 from queries.read_user import get_user_by_id
 
-def create_user(request):
+def create_user(name, email):
     """Create user, use WriteUser model"""
-    payload = request.get_json() or {}
-    name = payload.get('name')
-    email = payload.get('email')
     try:
         user_id = insert_user(name, email)
         return jsonify({'user_id': user_id}), 201

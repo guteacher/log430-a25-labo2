@@ -8,11 +8,8 @@ from flask import jsonify
 from commands.write_order import insert_order, delete_order
 from queries.read_order import get_order_by_id
 
-def create_order(request):
+def create_order(user_id, items):
     """Create order, use WriteOrder model"""
-    payload = request.get_json() or {}
-    user_id = payload.get('user_id')
-    items = payload.get('items', [])
     try:
         order_id = insert_order(user_id, items)
         return jsonify({'order_id': order_id}), 201

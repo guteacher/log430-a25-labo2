@@ -11,7 +11,7 @@
 ## ⚙️ Setup
 Dans ce laboratoire, vous développerez une application de gestion de magasin similaire à celle du labo 01. Cependant, cette application sera plus complexe puisqu’elle permettra la gestion des commandes, des articles et des utilisateurs. Veuillez utiliser les diagrammes UML disponibles dans le dossier `docs/views` comme référence pour l’implémentation.
 
-L’application est une API qui reçoit des requêtes d’un front-end, puis communique avec un serveur de base de données pour retourner les informations (architecture en trois couches).
+TODO:
 
 ### 1. Faites un fork et clonez le dépôt GitLab
 ```bash
@@ -26,18 +26,7 @@ Suivez les mêmes étapes que dans le laboratoire 00. Créez un fichier .env.
 Installez Postman et importez la collection disponible dans /docs/collections.
 
 ## 🧪 Activités pratiques
-
-### 1. Permettre l’accès à l’API
-
-Ouvrez le port 5000 dans le fichier docker-compose.yml afin de permettre l’accès à l’API via Postman :
-```yaml
-store_manager:
-  build: .
-  volumes:
-    - .:/app
-  ports:
-    - "5000:5000"
-```
+TODO:
 
 ### 2. Insérer dans Redis
 Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, insérez-la également dans Redis. Cela permettra de générer des rapports statistiques sur les commandes sans avoir à lire directement dans MySQL. Pour une application à forte charge (grand nombre de requêtes), cela permet de réduire la pression sur MySQL.

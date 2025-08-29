@@ -8,12 +8,8 @@ from flask import jsonify
 from commands.write_product import insert_product, delete_product
 from queries.read_product import get_product_by_id
 
-def create_product(request):
+def create_product(name, sku, price):
     """Create product, use WriteProduct model"""
-    payload = request.get_json() or {}
-    name = payload.get('name')
-    sku = payload.get('sku')
-    price = payload.get('price')
     try:
         product_id = insert_product(name, sku, price)
         return jsonify({'product_id': product_id}), 201
