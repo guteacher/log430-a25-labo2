@@ -13,7 +13,7 @@ from db import get_sqlalchemy_session, get_redis_conn
 def insert_order(user_id: int, items: list):
     """Insert order with items in MySQL, keep Redis in sync"""
     if not items:
-        raise ValueError("Cannot create order. An order must have 1 or more items.")
+        raise ValueError("Vous devez sélectionner au moins 1 item pour chaque commande.")
 
     product_ids = [item['product_id'] for item in items]
     session = get_sqlalchemy_session()
@@ -30,7 +30,7 @@ def insert_order(user_id: int, items: list):
             qty = item["quantity"]
 
             if pid not in price_map:
-                raise ValueError(f"Product ID {pid} not found in database.")
+                raise ValueError(f"Article ID {pid} n'est pas dans la base de données.")
 
             unit_price = price_map[pid]
             total_amount += unit_price * qty
