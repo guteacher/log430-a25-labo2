@@ -3,36 +3,35 @@ Order controller
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
-
-from flask import jsonify
+import numbers
 from commands.write_order import insert_order, delete_order
-from queries.read_order import get_order_by_id
+from queries.read_order import get_orders
 
 def create_order(user_id, items):
     """Create order, use WriteOrder model"""
     try:
-        order_id = insert_order(user_id, items)
-        return jsonify({'order_id': order_id}), 201
+        return insert_order(user_id, items)
+    except ValueError as e:
+        return str(e)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(e)
+        return "Une erreur s'est produite lors de la création de l'enregistrement. Veuillez consulter les logs pour plus d'informations."
 
 def remove_order(order_id):
     """Delete order, use WriteOrder model"""
     try:
-        deleted = delete_order(order_id)
-        if deleted:
-            return jsonify({'deleted': True})
-        return jsonify({'deleted': False}), 404
+        return delete_order(order_id)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(e)
+        return "Une erreur s'est produite lors de la supression de l'enregistrement. Veuillez consulter les logs pour plus d'informations."
 
-def get_order(order_id):
-    """Get order by id, use ReadOrder model"""
+def list_orders(limit):
+    """Get last X orders, use ReadOrder model"""
     try:
-        order = get_order_by_id(order_id)
-        return jsonify(order), 201
+        return get_orders(limit)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(e)
+        return "Une erreur s'est produite lors de la requête de base de données. Veuillez consulter les logs pour plus d'informations."
     
 def get_report_highest_spending_users():
     """Get orders report: highest spending users"""

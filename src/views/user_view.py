@@ -8,9 +8,10 @@ from views.template_view import get_template, get_param
 from controllers.user_controller import create_user, delete_user, list_users
 
 def show_user_form():
-    users = list_users(50)
+    users = list_users(10)
     return get_template(f"""
         <h2>Utilisateurs</h2>
+        <p>Les 10 derniers enregistrements</p>
         <ul>
             {" ".join([f"""<li><a href="/users/remove/{user.id}">[x]</a> {user.id} - {user.name} </li>""" for user in users])}
         </ul>

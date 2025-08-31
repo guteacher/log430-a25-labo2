@@ -4,6 +4,7 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
+from sqlalchemy import desc
 from models.user import User
 from db import get_sqlalchemy_session
 

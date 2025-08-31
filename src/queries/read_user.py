@@ -4,6 +4,7 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 
+from sqlalchemy import desc
 from db import get_sqlalchemy_session
 from models.user import User
 
@@ -24,5 +25,5 @@ def get_user_by_id(user_id):
 def get_users(limit=10):
     """Get last X users"""
     session = get_sqlalchemy_session()
-    return session.query(User).limit(limit).all()
+    return session.query(User).order_by(desc(User.id)).limit(limit).all()
 

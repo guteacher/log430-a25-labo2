@@ -3,8 +3,7 @@ Orders (write-only model)
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
-
-import json
+import re
 from models.product import Product
 from models.order_item import OrderItem
 from models.order import Order
@@ -12,35 +11,42 @@ from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
     """Insert order with items in MySQL, keep Redis in sync"""
-    if not items:
-        raise ValueError("Vous devez sélectionner au moins 1 item pour chaque commande.")
+    if not user_id or not items:
+        raise ValueError("Vous devez indiquer au moins 1 utilisateur et 1 item pour chaque commande.")
 
-    product_ids = [item['product_id'] for item in items]
+    try:
+        product_ids = []
+        for item in items:
+            product_ids.append(int(item['product_id']))
+    except Exception as e:
+        print(e)
+        raise ValueError(f"L'ID Article n'est pas valide: {item['product_id']}")
     session = get_sqlalchemy_session()
 
     try:
         products_query = session.query(Product).filter(Product.id.in_(product_ids)).all()
         price_map = {product.id: product.price for product in products_query}
-        
         total_amount = 0
         order_items_data = []
         
         for item in items:
-            pid = item["product_id"]
-            qty = item["quantity"]
+            pid = int(item["product_id"])
+            qty = float(item["quantity"])
+
+            if not qty or qty <= 0:
+                raise ValueError(f"Vous devez indiquer une quantité superieure à zéro.")
 
             if pid not in price_map:
                 raise ValueError(f"Article ID {pid} n'est pas dans la base de données.")
 
             unit_price = price_map[pid]
             total_amount += unit_price * qty
-
             order_items_data.append({
                 'product_id': pid,
                 'quantity': qty,
                 'unit_price': unit_price
             })
-
+        
         new_order = Order(user_id=user_id, total_amount=total_amount)
         session.add(new_order)
         session.flush() 

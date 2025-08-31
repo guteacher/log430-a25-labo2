@@ -3,8 +3,6 @@ Product controller
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
-
-from flask import jsonify
 from commands.write_product import insert_product, delete_product_by_id
 from queries.read_product import get_products
 

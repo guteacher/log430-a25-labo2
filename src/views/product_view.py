@@ -8,9 +8,10 @@ from views.template_view import get_template, get_param
 from controllers.product_controller import create_product, delete_product, list_products
 
 def show_product_form():
-    products = list_products(50)
+    products = list_products(10)
     return get_template(f"""
         <h2>Articles</h2>
+        <p>Les 10 derniers enregistrements</p>
         <ul>
             {" ".join([f"""<li><a href="/products/remove/{product.id}">[x]</a> {product.id} - {product.name} </li>""" for product in products])}
         </ul>
@@ -18,7 +19,7 @@ def show_product_form():
         <form method="POST" action="/products/add">
             <label>Nom <input type="text" name="name" maxlength="100" required></label><br>
             <label>Numéro SKU <input type="text" name="sku" maxlength="64" required></label><br>
-            <label>Prix unitaire <input type="number" name="price" step="0.01" value="1.00" min="0.00" max="99999.00"></label><br>
+            <label>Prix unitaire <input type="number" name="price" step="0.01" value="1.00" min="0.00" max="99999.00" required></label><br>
             <input type="submit" value="Enregistrer">
         </form>
     """)

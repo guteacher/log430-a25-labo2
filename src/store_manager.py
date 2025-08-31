@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
 from views.user_view import show_user_form, register_user, remove_user
 from views.product_view import show_product_form, register_product, remove_product
-from views.order_view import show_order_form
+from views.order_view import show_order_form, register_order, remove_order
 
 class StoreManager(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -48,9 +48,11 @@ class StoreManager(BaseHTTPRequestHandler):
             self._send_html(response)
         elif self.path == "/orders":
             self._send_html(show_order_form())
+        elif self.path.startswith("/orders/remove/"):
+            response = remove_order(id)
+            self._send_html(response)
         elif self.path == "/form.css":
             script_dir = os.path.dirname(__file__)
-            print(script_dir)
             # Serve CSS with the correct MIME type
             with open(script_dir + "/form.css", "r") as file:
                 css = "".join(file.readlines())
@@ -70,6 +72,9 @@ class StoreManager(BaseHTTPRequestHandler):
             self._send_html(response)
         elif self.path == "/products/add":
             response = register_product(params)
+            self._send_html(response)
+        elif self.path == "/orders/add":
+            response = register_order(params)
             self._send_html(response)
         else:
             self._send_html("<h2>404 Page Not Found</h2>", status=404)
