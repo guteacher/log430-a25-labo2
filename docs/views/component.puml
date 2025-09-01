@@ -12,7 +12,7 @@ package Model {
     [OrderItem]
 }
 
-[OrderView] --> [OrderController] : Demande de création de commande
+[OrderView] --> [OrderController] : Demander la création d'une commande
 [OrderController] --> [Order] : Créer une commande
 [OrderController] --> [OrderItem] : Créer les articles de la commande
 [OrderItem] --> [OrderController] : Notifier le Controller
