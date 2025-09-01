@@ -17,20 +17,39 @@ def show_order_form():
     users = list_users(99)
     return get_template(f"""
         <h2>Commandes</h2>
-        <p>Les 10 derniers enregistrements</p>
-        <ul>
-            {" ".join([f"""<li><a href="/orders/remove/{order.id}">[x]</a> Commande {order.id}, ${order.total_amount}  </li>""" for order in orders])}
-        </ul>
+        <p>Voici les 10 derniers enregistrements :</p>
+        <table class="table">
+            <tr>
+                <th>ID</th> 
+                <th>Total</th> 
+                <th>Actions</th> 
+            </tr>  
+            {" ".join([f"""
+                    <tr>
+                       <td>{order.id}</td>
+                       <td>${order.total_amount}</td>
+                       <td><a href="/orders/remove/{order.id}">Supprimer</a></td>
+                    </tr> """ for order in orders])}
+        </table>
         <h2>Enregistrement</h2>
         <form method="POST" action="/orders/add">
-           <label>Utilisateur <select name="user_id" required>
-                {" ".join([f"""<option key={user.id} value={user.id}>{user.name}</option>""" for user in users])}
-           </select></label><br>
-           <label>Article <select name="product_id" required>
-                {" ".join([f"""<option key={product.id} value={product.id}>{product.name} (${product.price})</option>""" for product in products])}
-           </select></label><br>
-           <label>Quantité <input type="number" name="quantity" step="1" value="1" min="1" max="999" required></label><br>
-           <input type="submit" value="Enregistrer">
+            <div class="mb-3">
+                <label class="form-label">Utilisateur</label>
+                <select class="form-control" name="user_id" required>
+                    {" ".join([f"""<option key={user.id} value={user.id}>{user.name}</option>""" for user in users])}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Article</label>
+                <select class="form-control" name="product_id" required>
+                    {" ".join([f"""<option key={product.id} value={product.id}>{product.name} (${product.price})</option>""" for product in products])}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Quantité</label>
+                <input class="form-control" type="number" name="quantity" step="1" value="1" min="1" max="999" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
         </form>
     """)
 

@@ -12,15 +12,31 @@ def show_user_form():
     users = list_users(10)
     return get_template(f"""
         <h2>Utilisateurs</h2>
-        <p>Les 10 derniers enregistrements</p>
-        <ul>
-            {" ".join([f"""<li><a href="/users/remove/{user.id}">[x]</a> {user.id} - {user.name} </li>""" for user in users])}
-        </ul>
+        <p>Voici les 10 derniers enregistrements :</p>
+        <table class="table">
+            <tr>
+                <th>ID</th> 
+                <th>Prénom</th>
+                <th>Actions</th> 
+            </tr>  
+            {" ".join([f"""
+                    <tr>
+                       <td>{user.id}</td>
+                       <td>{user.name}</td>
+                       <td><a href="/users/remove/{user.id}">Supprimer</a></td>
+                    </tr> """ for user in users])}
+        </table>
         <h2>Enregistrement</h2>
         <form method="POST" action="/users/add">
-            <label>Prénom <input type="text" name="name" maxlength="100" required></label><br>
-            <label>Adresse courriel <input type="email" name="email" maxlength="150" required></label><br>
-            <input type="submit" value="Enregistrer">
+            <div class="mb-3">
+                <label class="form-label">Prénom</label>
+                <input class="form-control"  type="text" name="name" maxlength="100" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Adresse courriel</label>
+                <input class="form-control"  type="email" name="email" maxlength="150" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
         </form>
     """)
 
