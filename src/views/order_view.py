@@ -5,13 +5,14 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 import numbers
 from views.template_view import get_template, get_param
-from controllers.order_controller import create_order, delete_order, list_orders
+from controllers.order_controller import create_order, delete_order, list_orders_from_mysql
 from controllers.product_controller import list_products
 from controllers.user_controller import list_users
 
 def show_order_form():
     """ Show order form and list """
-    orders = list_orders(10)
+    # TODO: utilisez Redis seulement
+    orders = list_orders_from_mysql(10)
     products = list_products(99)
     users = list_users(99)
     return get_template(f"""

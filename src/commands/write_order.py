@@ -6,7 +6,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 from models.product import Product
 from models.order_item import OrderItem
 from models.order import Order
-from queries.read_order import get_orders
+from queries.read_order import get_orders_from_mysql
 from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
@@ -64,7 +64,7 @@ def insert_order(user_id: int, items: list):
 
         session.commit()
 
-        # TODO: ajouter la commande à la base de données Redis
+        # TODO: ajouter la commande à Redis
         insert_order_to_redis(order_id, user_id, total_amount, items)
 
         return order_id
@@ -85,7 +85,7 @@ def delete_order(order_id: int):
             session.delete(order)
             session.commit()
 
-            # TODO: supprimer la commande de la base de données Redis
+            # TODO: supprimer la commande à Redis
             delete_order_from_redis(order_id)
             return 1  
         else:
@@ -110,17 +110,19 @@ def sync_all_orders_to_redis():
     # redis
     r = get_redis_conn()
     orders_in_redis = r.keys(f"order:*")
-
-    if not orders_in_redis:
-        # mysql
-        orders_from_mysql = get_orders()
-        for order in orders_from_mysql:
-            r.hset(
-                f"order:{order.id}",
-                mapping={
-                    "user_id": order.user_id,
-                    "total_amount": float(order.total_amount),
-                }
-            )
-    else:
-        print('Redis contains one or more orders')
+    rows_added = 0
+    try:
+        if len(orders_in_redis) == 0:
+            # mysql
+            orders_from_mysql = []
+            for order in orders_from_mysql:
+                # TODO: terminez l'implementation
+                print(order)
+            rows_added = len(orders_from_mysql)
+        else:
+            print('Redis already contains orders, no need to sync!')
+    except Exception as e:
+        print(e)
+        return 0
+    finally:
+        return len(orders_in_redis) + rows_added
