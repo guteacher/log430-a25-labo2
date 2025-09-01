@@ -63,4 +63,4 @@ Si tous les tests passent ✅, vos implémentations sont correctes.
 
 ## 📦 Livrables
 - Un fichier .zip contenant l’intégralité du code source du projet Labo 02.
-- Un rapport en .pdf répondant aux 4 questions présentées dans ce document. Il est obligatoire d’illustrer vos réponses avec du code ou des captures de terminal.
+- Un rapport en .pdf répondant aux 5 questions présentées dans ce document. Il est obligatoire d’illustrer vos réponses avec du code ou des captures de terminal.
