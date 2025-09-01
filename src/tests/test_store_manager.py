@@ -6,7 +6,7 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 from commands.write_order import sync_all_orders_to_redis
 from controllers.order_controller import create_order, remove_order
 from db import get_redis_conn
-from views.report_view import show_highest_spending_users
+from views.report_view import show_highest_spending_users, show_best_sellers
 
 def test_sync_all_orders_to_redis():     
     orders_added = sync_all_orders_to_redis()
@@ -36,3 +36,8 @@ def test_report_highest_spenders():
     assert "<html>" in report_html
     assert "Les plus grands acheteurs" in report_html
     assert "Ada Lovelace" in report_html
+
+def test_report_best_sellers():
+    report_html = show_best_sellers()
+    assert "<html>" in report_html
+    assert "Les articles les plus vendus" in report_html
