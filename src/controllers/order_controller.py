@@ -40,7 +40,6 @@ def list_orders_from_redis(limit):
         print(e)
         return "Une erreur s'est produite lors de la requête de base de données. Veuillez consulter les logs pour plus d'informations."
     
-
 def populate_redis_from_mysql():
    """Populate Redis with orders from MySQL, only if MySQL is empty"""
    sync_all_orders_to_redis()

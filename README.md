@@ -46,7 +46,7 @@ Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL,
 
 > 💡 **Question 4** : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
-### 4. Créer un rapport : les plus grands acheteurs
+### 4. Créer un rapport : les plus gros acheteurs
 Dans `queries/read_order.py`, créez une méthode qui obtient la liste le top 10 des utilisateurs ayant le plus dépensé en commandes. Utilisez la méthode `sorted` pour trier le résultat par total dépensé (ordre décroissant).
 
 ```python

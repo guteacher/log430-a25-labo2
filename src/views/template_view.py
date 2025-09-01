@@ -20,7 +20,7 @@ def show_main_menu():
             <br>
             <h2>Rapports</h2>        
             <ul class="list-group">
-                <li class="list-group-item"><a href="/orders/reports/highest_spenders">Les plus grands acheteurs</a></li>
+                <li class="list-group-item"><a href="/orders/reports/highest_spenders">Les plus gros acheteurs</a></li>
                 <li class="list-group-item"><a href="/orders/reports/best_sellers">Les articles les plus vendus</a></li>
             </ul>
         </nav>""", homepage=True)
