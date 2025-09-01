@@ -10,7 +10,7 @@ from views.template_view import show_main_menu, show_404_page
 from views.user_view import show_user_form, register_user, remove_user
 from views.product_view import show_product_form, register_product, remove_product
 from views.order_view import show_order_form, register_order, remove_order
-from views.report_view import show_highest_spending_users
+from views.report_view import show_highest_spending_users, show_best_sellers
 
 class StoreManager(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -36,6 +36,8 @@ class StoreManager(BaseHTTPRequestHandler):
             self._send_html(response)
         elif self.path == "/orders/reports/highest_spenders":
             self._send_html(show_highest_spending_users())
+        elif self.path == "/orders/reports/best_sellers":
+            self._send_html(show_best_sellers())
         elif "/assets" in self.path: # load assets such as images, CSS, etc.
             self.load_asset()      
         else:

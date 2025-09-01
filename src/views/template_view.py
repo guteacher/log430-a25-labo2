@@ -11,10 +11,17 @@ def show_main_menu():
     populate_redis_from_mysql()
     return get_template("""
         <nav>
+            <h2>Formulaires d'enregistrement</h2>
             <ul class="list-group">
                 <li class="list-group-item"><a href="/users">Utilisateurs</a></li>
                 <li class="list-group-item"><a href="/products">Articles</a></li>
                 <li class="list-group-item"><a href="/orders">Commandes</a></li>
+            </ul>
+            <br>
+            <h2>Rapports</h2>        
+            <ul class="list-group">
+                <li class="list-group-item"><a href="/orders/reports/highest_spenders">Les plus grands acheteurs</a></li>
+                <li class="list-group-item"><a href="/orders/reports/best_sellers">Les articles les plus vendus</a></li>
             </ul>
         </nav>""", homepage=True)
 
