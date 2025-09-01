@@ -3,10 +3,10 @@ Orders (write-only model)
 SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
-import re
 from models.product import Product
 from models.order_item import OrderItem
 from models.order import Order
+from queries.read_order import get_orders
 from db import get_sqlalchemy_session, get_redis_conn
 
 def insert_order(user_id: int, items: list):
@@ -106,3 +106,21 @@ def delete_order_from_redis(order_id):
     """Delete order from Redis"""
     pass
 
+def sync_all_orders_to_redis():
+    # redis
+    r = get_redis_conn()
+    orders_in_redis = r.keys(f"order:*")
+
+    if not orders_in_redis:
+        # mysql
+        orders_from_mysql = get_orders()
+        for order in orders_from_mysql:
+            r.hset(
+                f"order:{order.id}",
+                mapping={
+                    "user_id": order.user_id,
+                    "total_amount": float(order.total_amount),
+                }
+            )
+    else:
+        print('Redis contains one or more orders')

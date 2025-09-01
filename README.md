@@ -9,9 +9,7 @@
 - Comprendre l’importance d’un ORM (Object-Relational Mapping) pour faciliter l’interaction avec les bases de données.
 
 ## ⚙️ Setup
-Dans ce laboratoire, vous développerez une application de gestion de magasin similaire à celle du labo 01. Cependant, cette application sera plus complexe puisqu’elle permettra la gestion des commandes, des articles et des utilisateurs. Veuillez utiliser les diagrammes UML disponibles dans le dossier `docs/views` comme référence pour l’implémentation.
-
-TODO:
+Dans ce laboratoire, vous développerez une application de gestion de magasin similaire à celle du labo 01. Cependant, cette application sera plus complexe puisqu’elle permettra la gestion des commandes, des articles et des utilisateurs dans une interface Web. Veuillez utiliser les diagrammes UML disponibles dans le dossier `docs/views` comme référence pour l’implémentation.
 
 ### 1. Faites un fork et clonez le dépôt GitLab
 ```bash
@@ -22,51 +20,41 @@ cd log430-a25-labo2
 ### 2. Préparez l’environnement de développement
 Suivez les mêmes étapes que dans le laboratoire 00. Créez un fichier .env.
 
-### 3. Installez Postman
-Installez Postman et importez la collection disponible dans /docs/collections.
-
 ## 🧪 Activités pratiques
-TODO:
+TODO: why use polyglot
+
+### 1. Population initiale de Redis au démarrage
+Créez une fonction qui charge toutes les commandes depuis MySQL vers Redis au démarrage
+
+**Exemple de code**:
+```python
+pass
+```
 
 ### 2. Insérer dans Redis
 Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, insérez-la également dans Redis. Cela permettra de générer des rapports statistiques sur les commandes sans avoir à lire directement dans MySQL. Pour une application à forte charge (grand nombre de requêtes), cela permet de réduire la pression sur MySQL.
 
 > 💡 Question 1 : Quelles methodes avez-vous utilisées pour ajouter des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
-### 3. Test : ajouter une commande
-Testez en utilisant la route `POST orders` à Postman.
-
-> 💡 Question 2 : Quel résultat de requête avez-vous obtenu? Veuillez inclure la sortie à Postman pour illustrer votre réponse.
-
-### 4. Supprimer dans Redis
+### 3. Supprimer dans Redis
 Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL, supprimez-la également de Redis afin de maintenir la consistance des données.
 
-> 💡 Question 3 : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
+> 💡 Question 2 : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
-### 5. Test : supprimer une commande
-Testez en utilisant la route `DELETE orders` à Postman.
-
-> 💡 Question 4 : Quel résultat de requête avez-vous obtenu? Veuillez inclure la sortie à Postman pour illustrer votre réponse.
-
-### 6. Écrivez les « smoke tests »
-Écrivez les tests unitaires qu'appelent les routes `POST orders` et  `DELETE orders` et vérifient si le résultat est consistent. Utilisez comme exemple le test qu'existe dèjá à `tests/test_store_manager.py`.
-
-### 7. Créer un rapport : highest_spending_users
-Dans `queries/read_order.py`, créez une méthode qui obtient la liste le top 10 des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
-
-> 💡 Question 5 : Comment avez-vous testé cette route dans Postman ? Veuillez inclure votre collection Postman pour illustrer votre réponse.
-
-### 8. Insérer les produits dans Redis
-Dans `commands/write_order.py`, à chaque commande ajoutée dans MySQL, mettez également à jour dans Redis le nombre de fois que chaque article a été commandé. Si l’article existe déjà, incrémentez la valeur. Exemple :
-```python
-count = r.get("product:123")
-r.set("product:123", int(count) + 1 if count else 1)
-```
-
-### 9. Créer un rapport : best_selling_products
+### 4. Créer un rapport : best_selling_products
 Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus vendus. Triez le résultat par nombre de commandes (ordre décroissant).
 
-> 💡 Question 6 : Pourrions-nous réaliser l’activité 6 sans avoir fait l’activité 5 au préalable ? Quels en seraient les impacts sur la performance ?
+> 💡 Question 3 : TODO
+
+### ✅ Correction des activités
+
+Des tests unitaires sont inclus dans le dépôt. Pour les exécuter :
+
+```bash
+python3 -m pytest
+```
+
+Si tous les tests passent ✅, vos implémentations sont correctes.
 
 ## 📦 Livrables
 - Un fichier .zip contenant l’intégralité du code source du projet Labo 02.

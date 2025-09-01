@@ -4,37 +4,19 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 import os
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs
+from views.template_view import show_main_menu
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from views.user_view import show_user_form, register_user, remove_user
 from views.product_view import show_product_form, register_product, remove_product
 from views.order_view import show_order_form, register_order, remove_order
+from views.report_view import show_highest_spending_users
 
 class StoreManager(BaseHTTPRequestHandler):
     def do_GET(self):
         id = self.path.split("/")[-1]
         if self.path == "/" or self.path == "/home":
-            self._send_html("""
-                <!DOCTYPE html>
-                <html lang="fr">
-                    <head>
-                        <meta charset="UTF-8">
-                        <link rel="stylesheet" href="/form.css">
-                    </head>
-                    <body>
-                        <h1>Le Magasin du Coin</h1>
-                        <p>Menu principal</p>
-                        <hr>
-                        <nav>
-                            <ul>
-                                <li><a href="/users">Utilisateurs</a></li>
-                                <li><a href="/products">Articles</a></li>
-                                <li><a href="/orders">Commandes</a></li>
-                            </ul>
-                        </nav>
-                    </body>
-                </html>
-            """)
+            self._send_html(show_main_menu())
             return
         if self.path == "/users":
             self._send_html(show_user_form())
@@ -51,6 +33,8 @@ class StoreManager(BaseHTTPRequestHandler):
         elif self.path.startswith("/orders/remove/"):
             response = remove_order(id)
             self._send_html(response)
+        elif self.path == "/orders/reports/highest_spenders":
+            self._send_html(show_highest_spending_users())
         elif self.path == "/form.css":
             script_dir = os.path.dirname(__file__)
             # Serve CSS with the correct MIME type

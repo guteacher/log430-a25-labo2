@@ -22,7 +22,7 @@ def get_user_by_id(user_id):
     else:
         return {}
 
-def get_users(limit=10):
+def get_users(limit=9999):
     """Get last X users"""
     session = get_sqlalchemy_session()
     return session.query(User).order_by(desc(User.id)).limit(limit).all()

@@ -23,7 +23,7 @@ def get_product_by_id(product_id):
     else:
         return {}
 
-def get_products(limit=10):
+def get_products(limit=9999):
     """Get last X products"""
     session = get_sqlalchemy_session()
     return session.query(Product).order_by(desc(Product.id)).limit(limit).all()

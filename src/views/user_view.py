@@ -8,6 +8,7 @@ from views.template_view import get_template, get_param
 from controllers.user_controller import create_user, delete_user, list_users
 
 def show_user_form():
+    """ Show user form and list """
     users = list_users(10)
     return get_template(f"""
         <h2>Utilisateurs</h2>
@@ -24,6 +25,7 @@ def show_user_form():
     """)
 
 def register_user(params):
+    """ Add user based on params """
     if len(params.keys()):
         name = get_param(params, "name")
         email = get_param(params, "email")
@@ -46,6 +48,7 @@ def register_user(params):
             """)
     
 def remove_user(user_id):
+    """ Remove user with given ID """
     result = delete_user(user_id)
     if result:
         return get_template(f"""

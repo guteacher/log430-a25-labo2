@@ -8,6 +8,7 @@ from views.template_view import get_template, get_param
 from controllers.product_controller import create_product, delete_product, list_products
 
 def show_product_form():
+    """ Show product form and list """
     products = list_products(10)
     return get_template(f"""
         <h2>Articles</h2>
@@ -25,6 +26,7 @@ def show_product_form():
     """)
 
 def register_product(params):
+    """ Add product based on given params """
     if len(params.keys()):
         name = get_param(params, "name")
         sku = get_param(params, "sku")
@@ -48,6 +50,7 @@ def register_product(params):
             """)
     
 def remove_product(product_id):
+    """ Remove product with given ID """
     result = delete_product(product_id)
     if result:
         return get_template(f"""

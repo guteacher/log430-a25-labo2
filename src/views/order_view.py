@@ -10,6 +10,7 @@ from controllers.product_controller import list_products
 from controllers.user_controller import list_users
 
 def show_order_form():
+    """ Show order form and list """
     orders = list_orders(10)
     products = list_products(99)
     users = list_users(99)
@@ -33,6 +34,7 @@ def show_order_form():
     """)
 
 def register_order(params):
+    """ Add an order based on given params """
     if len(params.keys()):
         user_id = get_param(params, "user_id")
         product_id = get_param(params, "product_id")
@@ -59,6 +61,7 @@ def register_order(params):
             """)
     
 def remove_order(order_id):
+    """ Remove an order with the given ID """
     result = delete_order(order_id)
     if result:
         return get_template(f"""
