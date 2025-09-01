@@ -11,7 +11,7 @@
 ## ⚙️ Setup
 Dans ce laboratoire, nous continuerons à développer l'application de gestion de magasin que nous avons commencée dans le laboratoire 01. Maintenant l'application deviendra plus complexe puisqu’elle permettra la gestion des commandes, des articles et des utilisateurs dans une interface Web. 
 
-Nous voulons préparer cette application à une charge de lecture et d'écriture élevée. Pour ce faire, nous utiliserons la persistance polyglotte avec Redis et MySQL. Tout au long des activités, vous découvrirez une stratégie pour y parvenir.
+Nous voulons préparer cette application à une charge de lecture et d'écriture élevée. Pour ce faire, nous utiliserons la persistance polyglotte avec [Redis](https://redis.io/docs/latest/develop/clients/redis-py/) et MySQL. Nous communiquons avec MySQL en utilisant [SQLAlchemy](https://www.geeksforgeeks.org/python/sqlalchemy-tutorial-in-python/). Tout au long des activités, vous découvrirez des stratégies pour optimiser la lecture et pour bien structurer et synchroniser les différentes parties de l'application.
 
 Veuillez utiliser les diagrammes UML disponibles dans le dossier `docs/views` comme référence pour l’implémentation.
 
@@ -47,9 +47,23 @@ Toujours dans `commands/write_order.py`, à chaque commande supprimée de MySQL,
 > 💡 **Question 4** : Quelles methodes avez-vous utilisées pour supprimer des données dans Redis ? Veuillez inclure le code pour illustrer votre réponse.
 
 ### 4. Créer un rapport : les plus grands acheteurs
-Dans `queries/read_order.py`, créez une méthode qui obtient la liste le top 10 des utilisateurs ayant le plus dépensé en commandes. Triez le résultat par total dépensé (ordre décroissant).
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste le top 10 des utilisateurs ayant le plus dépensé en commandes. Utilisez la méthode `sorted` pour trier le résultat par total dépensé (ordre décroissant).
+
+```python
+expenses_by_user = defaultdict(float)
+for order in orders:
+    expenses_by_user[order.user_id] += order.total
+highest_spending_users = sorted(expenses_by_user.items(), key=lambda item: item[1], reverse=True)
+```
 
 > 💡 **Question 5** : Si nous souhaitions créer un rapport similaire, mais présentant les produits les plus vendus, les informations dont nous disposons actuellement dans Redis sont-elles suffisantes, ou devrions-nous checher dans le tables sur MySQL ? Si nécessaire, quelles informations devrions-nous ajouter à Redis ? Veuillez inclure le code pour illustrer votre réponse.
+
+### 5. Créer un rapport : les articles plus vendus
+Dans `queries/read_order.py`, créez une méthode qui obtient la liste des articles les plus vendus. Triez le résultat par nombre d'articles vendus (ordre décroissant). Pour obtenir les données nécessaires à ce rapport, gardez chaque article de la commande (`order_items`) synchronisé avec Redis. Utilisez la méthode `incr` pour mettre à jour la quantité vendue de chaque article à chaque fois qu'une nouvelle commande est ajoutée à MySQL. 
+
+```python
+r.incr("product:123", 1)
+```
 
 ### ✅ Correction des activités
 

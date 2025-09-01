@@ -1,4 +1,4 @@
--- Create database (optional)
+-- Create database 
 CREATE DATABASE IF NOT EXISTS labo02_db;
 USE labo02_db;
 
