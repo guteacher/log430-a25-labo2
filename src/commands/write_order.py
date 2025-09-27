@@ -100,11 +100,19 @@ def delete_order(order_id: int):
 def add_order_to_redis(order_id, user_id, total_amount, items):
     """Insert order to Redis"""
     r = get_redis_conn()
-    print(r)
+    r.hset(
+        f"order:{order_id}",
+        mapping={
+            "user_id": user_id,
+            "total_amount": float(total_amount),
+            "items": json.dumps(items)
+        }
+    )
 
 def delete_order_from_redis(order_id):
     """Delete order from Redis"""
-    pass
+    r = get_redis_conn()
+    r.delete(f"order:{order_id}")
 
 def sync_all_orders_to_redis():
     """ Sync orders from MySQL to Redis """
@@ -114,11 +122,10 @@ def sync_all_orders_to_redis():
     rows_added = 0
     try:
         if len(orders_in_redis) == 0:
-            # mysql
-            orders_from_mysql = []
+            session = get_sqlalchemy_session()
+            orders_from_mysql = session.query(Order).all()
             for order in orders_from_mysql:
-                # TODO: terminez l'implementation
-                print(order)
+                r.hset(f"order:{order.id}", order)
             rows_added = len(orders_from_mysql)
         else:
             print('Redis already contains orders, no need to sync!')
